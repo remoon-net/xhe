@@ -15,6 +15,7 @@ type Config struct {
 type Device struct {
 	PrivateKey string `yaml:"PrivateKey"`
 	ListenPort uint16 `yaml:"ListenPort"`
+	Address    string `yaml:"Address"`
 }
 
 type Peer struct {
@@ -22,6 +23,8 @@ type Peer struct {
 	AllowedIPs   []string `yaml:"AllowedIPs"`
 	PresharedKey string   `yaml:"PresharedKey"`
 	Endpoint     string   `yaml:"Endpoint"`
+
+	PersistentKeepalive string `yaml:"PersistentKeepalive"`
 }
 
 func (d Device) String() string {
@@ -44,6 +47,9 @@ func (p Peer) String() string {
 	}
 	if p.Endpoint != "" {
 		fmt.Fprintf(&b, "endpoint=%s\n", p.Endpoint)
+	}
+	if p.PersistentKeepalive != "" {
+		fmt.Fprintf(&b, "persistent_keepalive_interval=%s\n", p.PersistentKeepalive)
 	}
 	return b.String()
 }
