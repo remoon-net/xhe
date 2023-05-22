@@ -96,7 +96,7 @@ func main() {
 	signal.Notify(term, unix.SIGTERM)
 	signal.Notify(term, os.Interrupt)
 
-	fmt.Printf("uapi %s start\n", args.tdev)
+	fmt.Printf("%s: uapi %s start\n", f.Name(), args.tdev)
 	select {
 	case <-term:
 	case <-errs:
