@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"os/signal"
 
 	"github.com/lainio/err2/try"
@@ -74,6 +75,10 @@ func main() {
 		try.To(yaml.Unmarshal(b, &c))
 		try.To(dev.IpcSet(c.String()))
 		try.To(dev.Up())
+		if c.Address != "" {
+			try.To(exec.Command("ip", "addr", "add", c.Address, "dev", args.tdev).Run())
+			try.To(exec.Command("ip", "link", "set", "dev", args.tdev, "up").Run())
+		}
 	}
 
 	errs := make(chan error)
