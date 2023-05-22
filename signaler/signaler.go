@@ -88,8 +88,13 @@ func (s *Signaler) Handshake(ep string, offer signaler.SDP) (roffer *signaler.SD
 
 func (s *Signaler) Accept() (ch <-chan signaler.Session, err error) {
 	defer err2.Handle(&err)
+	if s.authLink == "" {
+		cch := make(chan signaler.Session)
+		close(cch)
+		return cch, nil
+	}
 	req := try.To1(newReq(http.MethodGet, s.authLink, http.NoBody))
-	s.stream = try.To1(eventsource.SubscribeWith("", s.client, req))
+	s.stream = try.To1(eventsource.SubscribeWith("", s.getClient(), req))
 	offerCh := make(chan signaler.Session)
 	go func() {
 		defer close(offerCh)
