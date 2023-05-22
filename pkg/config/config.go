@@ -8,20 +8,20 @@ import (
 )
 
 type Config struct {
-	Device
-	Peers []Peer
+	Device `yaml:",omitempty,inline"`
+	Peers  []Peer `yaml:"Peers"`
 }
 
 type Device struct {
-	PrivateKey string
-	ListenPort uint16
+	PrivateKey string `yaml:"PrivateKey"`
+	ListenPort uint16 `yaml:"ListenPort"`
 }
 
 type Peer struct {
-	PublicKey    string
-	AllowedIPs   []string
-	PresharedKey string
-	Endpoint     string
+	PublicKey    string   `yaml:"PublicKey"`
+	AllowedIPs   []string `yaml:"AllowedIPs"`
+	PresharedKey string   `yaml:"PresharedKey"`
+	Endpoint     string   `yaml:"Endpoint"`
 }
 
 func (d Device) String() string {
