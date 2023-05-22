@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -101,7 +102,7 @@ func main() {
 	signal.Notify(term, unix.SIGTERM)
 	signal.Notify(term, os.Interrupt)
 
-	fmt.Printf("%s: uapi %s start\n", f.Name(), args.tdev)
+	log.Printf("%s: uapi %s start\n", f.Name(), args.tdev)
 	select {
 	case <-term:
 	case <-errs:
