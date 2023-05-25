@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -94,11 +95,12 @@ func (s *Signaler) Accept() (ch <-chan signaler.Session, err error) {
 		return cch, nil
 	}
 	req := try.To1(newReq(http.MethodGet, s.authLink, http.NoBody))
-	s.stream = try.To1(eventsource.SubscribeWith("", s.getClient(), req))
+	stream := try.To1(eventsource.SubscribeWith("", s.getClient(), req))
+	s.stream = stream
 	offerCh := make(chan signaler.Session)
 	go func() {
 		defer close(offerCh)
-		for ev := range s.stream.Events {
+		for ev := range stream.Events {
 			go func(ev eventsource.Event) {
 				var sdp signaler.SDP
 				if err := json.Unmarshal([]byte(ev.Data()), &sdp); err != nil {
@@ -111,6 +113,11 @@ func (s *Signaler) Accept() (ch <-chan signaler.Session, err error) {
 					id:  ev.Id(),
 				}
 			}(ev)
+		}
+	}()
+	go func() {
+		for err := range stream.Errors {
+			log.Println("eventsource err:", err)
 		}
 	}()
 	return offerCh, nil
