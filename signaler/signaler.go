@@ -69,8 +69,10 @@ func (s *Signaler) request(req *http.Request) (resp *http.Response, err error) {
 func (s *Signaler) Handshake(ep string, offer signaler.SDP) (roffer *signaler.SDP, err error) {
 	defer err2.Handle(&err)
 
-	ep = try.To1(getDomain(ep))
-	ep = try.To1(getEndpoint(s.doh, ep))
+	if !strings.HasPrefix(ep, "http") {
+		ep = try.To1(getDomain(ep))
+		ep = try.To1(getEndpoint(s.doh, ep))
+	}
 
 	var body bytes.Buffer
 	try.To(json.NewEncoder(&body).Encode(offer))
