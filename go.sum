@@ -81,8 +81,8 @@ github.com/pion/webrtc/v3 v3.1.59/go.mod h1:rJGgStRoFyFOWJULHLayaimsG+jIEoenhJ5M
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/sclevine/agouti v3.0.0+incompatible/go.mod h1:b4WX9W9L1sfQKXeJf1mUTLZKJ48R1S7H23Ji7oFO5Bw=
-github.com/shynome/wgortc v0.0.2 h1:rYf2MZmJAIZroqCo+vPY4P8G9dUmFLT85qJgoAMz76Q=
-github.com/shynome/wgortc v0.0.2/go.mod h1:S08vQ+Ds2vNTGnak/08Ad30eZbZjUejWNPiWhltkjvI=
+github.com/shynome/wgortc v0.0.9 h1:gDI+Ga4kR2dQFj4n031pUBcfBk1MP5OL8pREMhaw9o0=
+github.com/shynome/wgortc v0.0.9/go.mod h1:FKQuX4sUv1tMahF3v3+s1N/7HYoY7nSbVr/3MBP3NWo=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
