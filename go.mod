@@ -3,9 +3,9 @@ module github.com/remoon-net/xhe
 go 1.20
 
 require (
-	github.com/babolivier/go-doh-client v0.0.0-20201028162107-a76cff4cb8b6
 	github.com/donovanhide/eventsource v0.0.0-20210830082556-c59027999da0
 	github.com/lainio/err2 v0.9.0
+	github.com/shynome/go-doh-client v0.0.0-20230529011205-da0dbff1f723
 	github.com/shynome/wgortc v0.0.9
 	golang.org/x/sys v0.8.0
 	golang.zx2c4.com/wireguard v0.0.0-20230325221338-052af4a8072b
@@ -37,5 +37,3 @@ require (
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	golang.zx2c4.com/wintun v0.0.0-20230126152724-0fa3db229ce2 // indirect
 )
-
-replace github.com/babolivier/go-doh-client => /home/shynome/work/github.com/shynome/go-doh-client

@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/babolivier/go-doh-client"
 	"github.com/donovanhide/eventsource"
 	"github.com/lainio/err2"
 	"github.com/lainio/err2/try"
+	"github.com/shynome/go-doh-client"
 	"github.com/shynome/wgortc/signaler"
 )
 

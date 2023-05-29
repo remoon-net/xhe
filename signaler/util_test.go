@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/babolivier/go-doh-client"
 	"github.com/lainio/err2/assert"
 	"github.com/lainio/err2/try"
+	"github.com/shynome/go-doh-client"
 )
 
 var testEndpoint = "device1.shynome.hhsdd.com"

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/babolivier/go-doh-client"
+	"github.com/shynome/go-doh-client"
 )
 
 func getDomain(ep string) (string, error) {
