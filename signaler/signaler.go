@@ -33,7 +33,7 @@ func New(authLink string, options ...OptionApply) *Signaler {
 	s := &Signaler{
 		authLink: authLink,
 		doh: &doh.Resolver{
-			Host:  "dns.alidns.com",
+			Host:  "1.1.1.1",
 			Class: doh.IN,
 		},
 	}
