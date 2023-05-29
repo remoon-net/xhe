@@ -13,18 +13,18 @@ type Config struct {
 }
 
 type Device struct {
-	PrivateKey string `yaml:"PrivateKey"`
-	ListenPort uint16 `yaml:"ListenPort"`
-	Address    string `yaml:"Address"`
+	PrivateKey string `yaml:"PrivateKey" json:"PrivateKey"`
+	ListenPort uint16 `yaml:"ListenPort,omitempty" json:"ListenPort,omitempty"`
+	Address    string `yaml:"Address" json:"Address"`
 }
 
 type Peer struct {
-	PublicKey    string   `yaml:"PublicKey"`
-	AllowedIPs   []string `yaml:"AllowedIPs"`
-	PresharedKey string   `yaml:"PresharedKey"`
-	Endpoint     string   `yaml:"Endpoint"`
+	PublicKey    string   `yaml:"PublicKey" json:"PublicKey"`
+	AllowedIPs   []string `yaml:"AllowedIPs" json:"AllowedIPs"`
+	PresharedKey string   `yaml:"PresharedKey,omitempty" json:"PresharedKey,omitempty"`
+	Endpoint     string   `yaml:"Endpoint,omitempty" json:"Endpoint,omitempty"`
 
-	PersistentKeepalive string `yaml:"PersistentKeepalive"`
+	PersistentKeepalive string `yaml:"PersistentKeepalive,omitempty" json:"PersistentKeepalive,omitempty"`
 }
 
 func (d Device) String() string {

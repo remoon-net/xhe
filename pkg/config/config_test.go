@@ -1,9 +1,13 @@
 package config
 
 import (
+	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/lainio/err2/assert"
+	"github.com/lainio/err2/try"
+	"gopkg.in/yaml.v3"
 )
 
 func TestConfig(t *testing.T) {
@@ -35,4 +39,45 @@ allowed_ip=fdd9:f800::4
 `
 	assert.Equal(s, expectCfg)
 	t.Log(s)
+	// json
+	jsonStr := string(try.To1(json.MarshalIndent(c, "", "\t")))
+	expectJsonStr := `{
+	"PrivateKey": "aCykG/rNYDq6h8elhUBgxdnxhU9JZcWt+tXxQlzMCWU=",
+	"Address": "",
+	"Peers": [
+		{
+			"PublicKey": "WPyGz58E5tju7DH1CdPz2bQKMtiT3gBwOof+KnVlHmw=",
+			"AllowedIPs": [
+				"fdd9:f800::2"
+			]
+		},
+		{
+			"PublicKey": "FsojecwzyHD9HQr+Mknl2Klg8RRsuP5c+RRkIjADTAM=",
+			"AllowedIPs": [
+				"fdd9:f800::3",
+				"fdd9:f800::4"
+			],
+			"PresharedKey": "kNuohsA/3ziSyKJGzJdSCtcS9KJI1QRcbARcpCyVp2Q="
+		}
+	]
+}`
+	assert.Equal(jsonStr, expectJsonStr)
+	t.Log(jsonStr)
+	// yaml
+	yamlStr := string(try.To1(yaml.Marshal(c)))
+	expectYamlStr := `PrivateKey: aCykG/rNYDq6h8elhUBgxdnxhU9JZcWt+tXxQlzMCWU=
+Address: ""
+Peers:
+		- PublicKey: WPyGz58E5tju7DH1CdPz2bQKMtiT3gBwOof+KnVlHmw=
+			AllowedIPs:
+				- fdd9:f800::2
+		- PublicKey: FsojecwzyHD9HQr+Mknl2Klg8RRsuP5c+RRkIjADTAM=
+			AllowedIPs:
+				- fdd9:f800::3
+				- fdd9:f800::4
+			PresharedKey: kNuohsA/3ziSyKJGzJdSCtcS9KJI1QRcbARcpCyVp2Q=
+`
+	expectYamlStr = strings.ReplaceAll(expectYamlStr, "\t", "  ")
+	assert.Equal(yamlStr, expectYamlStr)
+	t.Log(yamlStr)
 }
