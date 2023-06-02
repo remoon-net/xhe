@@ -36,7 +36,7 @@ var f = flag.NewFlagSet(name, flag.ExitOnError)
 func initFlags() {
 	f.StringVar(&args.link, "link", os.Getenv("WG_XHE_LINK"), "server addr")
 	f.StringVar(&args.tdev, "tdev", "xhe", "tun dev filename")
-	f.StringVar(&args.doh, "doh", "dns.alidns.com", "custom doh server")
+	f.StringVar(&args.doh, "doh", "1.1.1.1", "custom doh server")
 	f.StringVar(&args.ices, "ices", "", "ices server")
 	f.StringVar(&args.config, "config", "", "yaml config")
 }
