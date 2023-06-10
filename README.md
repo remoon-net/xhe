@@ -1,7 +1,7 @@
 # config example
 
 ```yaml
-Address: fdd9:f800::1/24
+Addrs: ["fdd9:f800::1/24"]
 PrivateKey: oFk/ZbUSGDpJaUeDMzBSdwGFQcSBHsN9ox5gJv5nLkc=
 
 Peers:
@@ -9,3 +9,7 @@ Peers:
     AllowedIPs: ["fdd9:f800::2"]
     Endpoint: device.user.xhe.remoon.net
 ```
+
+# Todo
+
+- [ ] 配置热重载
