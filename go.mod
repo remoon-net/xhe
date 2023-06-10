@@ -1,4 +1,4 @@
-module github.com/remoon-net/xhe
+module remoon.net/xhe
 
 go 1.20
 
