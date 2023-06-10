@@ -10,18 +10,17 @@ import (
 	"os/signal"
 
 	"github.com/lainio/err2/try"
-	"github.com/remoon-net/xhe/pkg/config"
-	"github.com/remoon-net/xhe/signaler"
 	"github.com/shynome/wgortc"
 	"golang.org/x/sys/unix"
 	"golang.zx2c4.com/wireguard/device"
 	"golang.zx2c4.com/wireguard/ipc"
 	"golang.zx2c4.com/wireguard/tun"
 	"gopkg.in/yaml.v3"
+	"remoon.net/xhe/pkg/config"
+	"remoon.net/xhe/signaler"
 )
 
 var args struct {
-	link   string
 	config string
 
 	tdev     string
@@ -34,11 +33,10 @@ var name = fmt.Sprintf("xhe %s", Version)
 var f = flag.NewFlagSet(name, flag.ExitOnError)
 
 func initFlags() {
-	f.StringVar(&args.link, "link", os.Getenv("WG_XHE_LINK"), "server addr")
 	f.StringVar(&args.tdev, "tdev", "xhe", "tun dev filename")
 	f.StringVar(&args.doh, "doh", "1.1.1.1", "custom doh server")
 	f.StringVar(&args.ices, "ices", "", "ices server")
-	f.StringVar(&args.config, "config", "", "yaml config")
+	f.StringVar(&args.config, "config", "xhe.yaml", "yaml config")
 }
 
 func main() {
@@ -61,7 +59,14 @@ func main() {
 	if args.doh != "" {
 		opts = append(opts, signaler.WithDOHServer(args.doh))
 	}
-	server := signaler.New(args.link, opts...)
+
+	var c config.Config
+	{ // read config file
+		b := try.To1(os.ReadFile(args.config))
+		try.To(yaml.Unmarshal(b, &c))
+	}
+
+	server := signaler.New(c.Link, opts...)
 	bind := wgortc.NewBind(server)
 	if ices := args.ices; ices != "" {
 		try.To(json.Unmarshal([]byte(ices), &bind.ICEServers))
@@ -70,16 +75,18 @@ func main() {
 	dev := device.NewDevice(tdev, bind, device.NewLogger(logLevel, "xhe "))
 	defer dev.Close()
 
-	if args.config != "" {
-		b := try.To1(os.ReadFile(args.config))
-		var c config.Config
-		try.To(yaml.Unmarshal(b, &c))
-		try.To(dev.IpcSet(c.String()))
-		try.To(dev.Up())
-		if c.Address != "" {
-			try.To(exec.Command("ip", "addr", "add", c.Address, "dev", args.tdev).Run())
-			try.To(exec.Command("ip", "link", "set", "dev", args.tdev, "up").Run())
+	try.To(dev.IpcSet(c.String()))
+	try.To(dev.Up())
+
+	addrs := c.Addrs
+	if c.Address != "" {
+		addrs = append(addrs, c.Address)
+	}
+	if len(addrs) > 0 {
+		for _, addr := range addrs {
+			try.To(exec.Command("ip", "addr", "add", addr, "dev", args.tdev).Run())
 		}
+		try.To(exec.Command("ip", "link", "set", "dev", args.tdev, "up").Run())
 	}
 
 	errs := make(chan error)
