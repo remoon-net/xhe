@@ -15,7 +15,10 @@ type Config struct {
 type Device struct {
 	PrivateKey string `yaml:"PrivateKey" json:"PrivateKey"`
 	ListenPort uint16 `yaml:"ListenPort,omitempty" json:"ListenPort,omitempty"`
-	Address    string `yaml:"Address" json:"Address"`
+	Address    string `yaml:"Address,omitempty" json:"Address,omitempty"`
+
+	Addrs []string `yaml:"Addrs" json:"Addrs,omitempty"`
+	Link  string   `yaml:"Link,omitempty" json:"Link,omitempty"`
 }
 
 type Peer struct {

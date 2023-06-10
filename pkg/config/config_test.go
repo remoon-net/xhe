@@ -43,7 +43,6 @@ allowed_ip=fdd9:f800::4
 	jsonStr := string(try.To1(json.MarshalIndent(c, "", "\t")))
 	expectJsonStr := `{
 	"PrivateKey": "aCykG/rNYDq6h8elhUBgxdnxhU9JZcWt+tXxQlzMCWU=",
-	"Address": "",
 	"Peers": [
 		{
 			"PublicKey": "WPyGz58E5tju7DH1CdPz2bQKMtiT3gBwOof+KnVlHmw=",
@@ -66,7 +65,7 @@ allowed_ip=fdd9:f800::4
 	// yaml
 	yamlStr := string(try.To1(yaml.Marshal(c)))
 	expectYamlStr := `PrivateKey: aCykG/rNYDq6h8elhUBgxdnxhU9JZcWt+tXxQlzMCWU=
-Address: ""
+Addrs: []
 Peers:
 		- PublicKey: WPyGz58E5tju7DH1CdPz2bQKMtiT3gBwOof+KnVlHmw=
 			AllowedIPs:
