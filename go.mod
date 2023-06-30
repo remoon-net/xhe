@@ -6,7 +6,7 @@ require (
 	github.com/donovanhide/eventsource v0.0.0-20210830082556-c59027999da0
 	github.com/lainio/err2 v0.9.0
 	github.com/shynome/go-doh-client v0.0.0-20230529011205-da0dbff1f723
-	github.com/shynome/wgortc v0.0.9
+	github.com/shynome/wgortc v0.0.11
 	golang.org/x/sys v0.8.0
 	golang.zx2c4.com/wireguard v0.0.0-20230325221338-052af4a8072b
 	gopkg.in/yaml.v3 v3.0.1
