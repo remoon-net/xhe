@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/donovanhide/eventsource"
@@ -19,19 +20,23 @@ import (
 )
 
 type Signaler struct {
-	authLink string
+	links []string
+	items []*StreamItem
 
 	doh    *doh.Resolver
 	client *http.Client
-
-	stream *eventsource.Stream
 }
 
 var _ signaler.Channel = (*Signaler)(nil)
 
-func New(authLink string, options ...OptionApply) *Signaler {
+type StreamItem struct {
+	*eventsource.Stream
+	link string
+}
+
+func New(links []string, options ...OptionApply) *Signaler {
 	s := &Signaler{
-		authLink: authLink,
+		links: links,
 		doh: &doh.Resolver{
 			Host:  "1.1.1.1",
 			Class: doh.IN,
@@ -91,43 +96,69 @@ func (s *Signaler) Handshake(ep string, offer signaler.SDP) (roffer *signaler.SD
 
 func (s *Signaler) Accept() (ch <-chan signaler.Session, err error) {
 	defer err2.Handle(&err)
-	if s.authLink == "" {
+	if len(s.links) == 0 {
 		cch := make(chan signaler.Session)
 		close(cch)
 		return cch, nil
 	}
-	req := try.To1(newReq(http.MethodGet, s.authLink, http.NoBody))
-	stream := try.To1(eventsource.SubscribeWith("", s.getClient(), req))
-	s.stream = stream
+	var wg sync.WaitGroup
+	wg.Add(len(s.links))
+	for _, link := range s.links {
+		go func(link string) {
+			defer wg.Done()
+			defer err2.Catch()
+			req := try.To1(newReq(http.MethodGet, link, http.NoBody))
+			stream := try.To1(eventsource.SubscribeWith("", s.getClient(), req))
+			s.items = append(s.items, &StreamItem{Stream: stream, link: link})
+		}(link)
+	}
+	wg.Wait()
+
 	offerCh := make(chan signaler.Session)
 	go func() {
 		defer close(offerCh)
-		for ev := range stream.Events {
-			go func(ev eventsource.Event) {
-				var sdp signaler.SDP
-				if err := json.Unmarshal([]byte(ev.Data()), &sdp); err != nil {
-					return
-				}
-				offerCh <- &Session{
-					Signaler: s,
+		var wg sync.WaitGroup
+		wg.Add(len(s.items))
+		for _, item := range s.items {
+			go func(stream *eventsource.Stream, link string) {
+				defer wg.Done()
+				for ev := range stream.Events {
+					go func(ev eventsource.Event) {
+						var sdp signaler.SDP
+						if err := json.Unmarshal([]byte(ev.Data()), &sdp); err != nil {
+							return
+						}
+						offerCh <- &Session{
+							Signaler: s,
 
-					sdp: sdp,
-					id:  ev.Id(),
+							sdp:  sdp,
+							id:   ev.Id(),
+							link: link,
+						}
+					}(ev)
 				}
-			}(ev)
+			}(item.Stream, item.link)
 		}
+		wg.Wait()
 	}()
 	go func() {
-		for err := range stream.Errors {
-			log.Println("eventsource err:", err)
+		var wg sync.WaitGroup
+		wg.Add(len(s.items))
+		for _, item := range s.items {
+			go func(stream *eventsource.Stream) {
+				defer wg.Done()
+				for err := range stream.Errors {
+					log.Println("eventsource err:", err)
+				}
+			}(item.Stream)
 		}
+		wg.Wait()
 	}()
 	return offerCh, nil
 }
 
 func (s *Signaler) Close() error {
-	if stream := s.stream; stream != nil {
-		s.stream = nil
+	for _, stream := range s.items {
 		stream.Close()
 	}
 	return nil
@@ -137,6 +168,8 @@ type Session struct {
 	*Signaler
 	sdp signaler.SDP
 	id  string
+
+	link string
 }
 
 var _ signaler.Session = (*Session)(nil)
@@ -146,7 +179,7 @@ func (s *Session) Resolve(answer *signaler.SDP) (err error) {
 	defer err2.Handle(&err)
 	body := try.To1(json.Marshal(answer))
 
-	req := try.To1(newReq(http.MethodDelete, s.authLink, bytes.NewReader(body)))
+	req := try.To1(newReq(http.MethodDelete, s.link, bytes.NewReader(body)))
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	req = req.WithContext(ctx)

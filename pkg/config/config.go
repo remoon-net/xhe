@@ -19,6 +19,7 @@ type Device struct {
 
 	Addrs []string `yaml:"Addrs" json:"Addrs,omitempty"`
 	Link  string   `yaml:"Link,omitempty" json:"Link,omitempty"`
+	Links []string `yaml:"Links,omitempty" json:"Links,omitempty"`
 }
 
 type Peer struct {

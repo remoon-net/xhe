@@ -70,7 +70,10 @@ func main() {
 		try.To(yaml.Unmarshal(b, &c))
 	}
 
-	server := signaler.New(c.Link, opts...)
+	if c.Link != "" {
+		c.Links = append(c.Links, c.Link)
+	}
+	server := signaler.New(c.Links, opts...)
 	bind := wgortc.NewBind(server)
 	if ices := args.ices; ices != "" {
 		try.To(json.Unmarshal([]byte(ices), &bind.ICEServers))
