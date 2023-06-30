@@ -24,6 +24,7 @@ var args struct {
 	config string
 
 	tdev     string
+	mtu      int
 	logLevel int
 	doh      string
 	ices     string
@@ -34,10 +35,13 @@ var f = flag.NewFlagSet(name, flag.ExitOnError)
 
 func initFlags() {
 	f.StringVar(&args.tdev, "tdev", "xhe", "tun dev filename")
+	f.IntVar(&args.mtu, "mtu", defaultMTU, "dev mtu")
 	f.StringVar(&args.doh, "doh", "1.1.1.1", "custom doh server")
 	f.StringVar(&args.ices, "ices", "", "ices server")
 	f.StringVar(&args.config, "config", "xhe.yaml", "yaml config")
 }
+
+const defaultMTU = 1200 - (1500 - device.DefaultMTU)
 
 func main() {
 	initFlags()
@@ -71,7 +75,7 @@ func main() {
 	if ices := args.ices; ices != "" {
 		try.To(json.Unmarshal([]byte(ices), &bind.ICEServers))
 	}
-	tdev := try.To1(tun.CreateTUN(args.tdev, device.DefaultMTU))
+	tdev := try.To1(tun.CreateTUN(args.tdev, args.mtu))
 	dev := device.NewDevice(tdev, bind, device.NewLogger(logLevel, "xhe "))
 	defer dev.Close()
 
